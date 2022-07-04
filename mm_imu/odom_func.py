@@ -16,24 +16,24 @@ class OdomFunc():
     ##################
     def __init__(self):
 
-        #Save path_plan flag
+        # Save path_plan flag
         self.save_path_as_csv = True
 
-        #Cmd_vel receive flag (auto control)
+        # Cmd_vel receive flag (auto control)
         self.subscribe_cmd_vel = False
 
-        #Parameter
+        # Parameter
         self.MAX_SPEED_KMH = 30.0                       # MAX vehicle speed [km/h]
         self.MIN_SPEED_KMH = -20.0                      # MINIMUM vehicle speed [km/h]
         self.MAX_SPEED_MPS = self.MAX_SPEED_KMH / 3.6   # MAX vehicle speed [km/h]
         self.MIN_SPEED_MPS = self.MIN_SPEED_KMH / 3.6   # MAX vehicle speed [km/h]
         self.MAX_YAW_RATE = 1.57                        # MAX YAWRATE [rad/s]
 
-        #initiali position
+        # initiali position
         initPosx = 0.0
         initPosy = 0.0
 
-        #Initialize odometry header
+        # Initialize odometry header
         self.odom_header = Header()
         self.odom_header.frame_id = "odom"
 
@@ -46,11 +46,9 @@ class OdomFunc():
         self.sim_pose.orientation.y = 0.0
         self.sim_pose.orientation.z = 0.0
         self.sim_pose.orientation.w = 0.0
-        
 
         # initialize twist info
         self.sim_twist = Twist()
-
         # Initialize odometry info
         self.sim_odom = Odometry()
         self.sim_odom.header = self.odom_header
@@ -62,15 +60,10 @@ class OdomFunc():
         self.cmdvel_linear_y = 0.0
         self.cmdvel_angular_z = 0.0
 
-        self.x_od=0.0
-        self.y_od=0.0
-        self.theta_od=0.0
-
     #############################################
     # Update odometry form User request cmd_vel #
     #############################################
     def update_odom(self):
-        
         sampletime = 0.01    # calculate by 10msec
         e = euler_from_quaternion(self.sim_pose.orientation.x, self.sim_pose.orientation.y, self.sim_pose.orientation.z, self.sim_pose.orientation.w)
         yaw_euler = e[2]
@@ -88,15 +81,14 @@ class OdomFunc():
         self.sim_pose.orientation.y = updated_quaternion[1]
         self.sim_pose.orientation.z = updated_quaternion[2]
         self.sim_pose.orientation.w = updated_quaternion[0]
-        
 
-        #update timestamp
-        #self.odom_header.stamp = rospy.Time.now()
+        # update timestamp
+        # self.odom_header.stamp = rospy.Time.now()
         self.sim_odom.header = self.odom_header
         self.sim_odom.pose.pose = self.sim_pose
         self.sim_odom.twist.twist = self.sim_twist
 
-        #update TF
+        # update TF
         map_frame = TransformStamped()
         map_frame.header.frame_id = 'odom'
         map_frame.child_frame_id = 'base_footprint'
